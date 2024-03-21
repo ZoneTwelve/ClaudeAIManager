@@ -53,7 +53,14 @@ class ClaudeInstance:
         return {
             "completion": resp['completion'],
             "stop_reason": resp['stop_reason'],
+            "model": resp['model'],
         }
+
+    def delete(self) -> None:
+        deleted = self.claude_obj.delete_conversation(self.uuid)
+        # assert deleted
+        print(deleted)
+
     def get_message(self):
         try:
             data = self.history[-1]
@@ -87,12 +94,7 @@ class ClaudeManager:
         )
         uuid = chat['uuid']
         self.instance[uuid] = ClaudeInstance(chat, self.claude_obj)
-        # return {
-        #     "uuid": uuid,
-        #     "title": chat.title,
-        #     "response": chat.response,
-        #     "model": chat.model,
-        # }
+
         return self.instance[uuid]
 
 if __name__ == "__main__":
@@ -101,3 +103,5 @@ if __name__ == "__main__":
     print("First", session.get_message())
     resp = session.send_message("請問我叫什麼名字？")
     print("Second", resp)
+    delete_status = session.delete()
+    print("Conversation deleted", delete_status)
